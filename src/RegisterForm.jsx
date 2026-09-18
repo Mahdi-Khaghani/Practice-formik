@@ -1,7 +1,8 @@
 import { useFormik } from "formik";
+import * as Yup from 'yup'
 
 const initialValues = {
-  fullname: "mahdi",
+  fullname: "",
   email: "",
   password: "",
 };
@@ -10,27 +11,17 @@ const onSubmit = (values) => {
   console.log(values);
 };
 
-const validate = (values) => {
-  let error = {};
-  if (!values.fullname) {
-    error.fullname = "این قسمت را پر کنید";
-  }
-  if (!values.email) {
-    error.email = "این قسمت را پر کنید";
-  }else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)){
-    error.email = "لطفا قالب نوشتاری را رعایت کنید"
-  }
-  if (!values.password) {
-    error.password = "این قسمت را پر کنید";
-  }
-  return error;
-};
+const validationSchema = Yup.object({
+  fullname :Yup.string().required("لطفا این قسمت را کامل کنید"),
+  email :Yup.string().required("لطفا این قسمت را کامل کنید").email("لطفا قالب ایمیل را رعایت کنید"),
+  password :Yup.string().required("لطفا این قسمت را کامل کنید").min(8,"حداقل 8 کاراکتر وارد کنید")
+})
 
 const RegisterForm = () => {
   const formik = useFormik({
     initialValues,
     onSubmit,
-    validate,
+    validationSchema
   });
 
   console.log(formik);
@@ -60,11 +51,9 @@ const RegisterForm = () => {
             </label>
 
             <input
-              value={formik.values.fullname}
-              onBlur={formik.handleBlur}
+              {...formik.getFieldProps("fullname")}
               id="fullName"
               name="fullname"
-              onChange={formik.handleChange}
               type="text"
               placeholder="مثلاً علی احمدی"
               className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
@@ -88,9 +77,7 @@ const RegisterForm = () => {
 
             <input
               name="email"
-              onBlur={formik.handleBlur}
-              value={formik.values.email}
-              onChange={formik.handleChange}
+              {...formik.getFieldProps("email")}
               id="email"
               type="email"
               placeholder="example@gmail.com"
@@ -115,9 +102,7 @@ const RegisterForm = () => {
 
             <input
               name="password"
-              onBlur={formik.handleBlur}
-              value={formik.values.password}
-              onChange={formik.handleChange}
+              {...formik.getFieldProps("password")}
               id="password"
               type="password"
               placeholder="رمز عبور خود را وارد کنید"
