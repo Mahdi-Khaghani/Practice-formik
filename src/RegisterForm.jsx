@@ -1,10 +1,13 @@
 import { ErrorMessage, FastField, Form, Formik } from "formik";
 import * as Yup from "yup";
+import PersonalField from "./PersonalField";
+import PersonalError from "./PersonalError";
 
 const initialValues = {
   fullname: "",
   email: "",
   password: "",
+  bio: "",
 };
 
 const onSubmit = (values) => {
@@ -59,17 +62,10 @@ const RegisterForm = () => {
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {(props) => {
-                  console.log("fullname")
-                  console.log(props)
-                  return(
-                    <div>
-
-                    </div>
-                  )
+                  console.log(props);
+                  return <PersonalField {...props} />;
                 }}
-                </FastField>
-
-              <ErrorMessage name="fullname" />
+              </FastField>
             </div>
 
             {/* Email */}
@@ -89,7 +85,7 @@ const RegisterForm = () => {
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
               />
 
-              <ErrorMessage name="email" />
+              <ErrorMessage name="email" component={PersonalError} />
             </div>
 
             {/* Password */}
@@ -108,7 +104,32 @@ const RegisterForm = () => {
                 placeholder="رمز عبور خود را وارد کنید"
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <ErrorMessage name="password" />
+              <ErrorMessage name="password">
+                {(error) => (
+                  <span className="text-red-600 font-medium text-center">
+                    {error}
+                  </span>
+                )}
+              </ErrorMessage>
+            </div>
+
+            <div>
+              <label
+                htmlFor="bio"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
+                بیوگرافی
+              </label>
+
+              <FastField
+                name="bio"
+                id="bio"
+                type="text"
+                placeholder=" بیوگرافی خود را وارد کنید"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
+                as="textarea"
+              />
+              <ErrorMessage name="bio" />
             </div>
 
             {/* Favorite */}
