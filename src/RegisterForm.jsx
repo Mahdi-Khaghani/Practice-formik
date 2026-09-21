@@ -1,13 +1,26 @@
-import { ErrorMessage, FastField, Form, Formik } from "formik";
+import {
+  ErrorMessage,
+  FastField,
+  FieldArray,
+  Form,
+  Formik,
+} from "formik";
 import * as Yup from "yup";
 import PersonalField from "./PersonalField";
 import PersonalError from "./PersonalError";
+import FavoritsField from "./FavoritsField";
 
 const initialValues = {
   fullname: "",
   email: "",
   password: "",
   bio: "",
+  address: {
+    city: "",
+    postalCode: "",
+  },
+  phone: ["", ""],
+  faivorits: [""],
 };
 
 const onSubmit = (values) => {
@@ -22,6 +35,12 @@ const validationSchema = Yup.object({
   password: Yup.string()
     .required("لطفا این قسمت را کامل کنید")
     .min(8, "حداقل 8 کاراکتر وارد کنید"),
+  address: Yup.object({
+    city: Yup.string().required("لطفا این قسمت را کامل کنید"),
+    postalCode: Yup.string().required("لطفا این قسمت را کامل کنید"),
+  }),
+  phone: Yup.array().of(Yup.string().required("لطفا این قسمت را کامل کنید")),
+  faivorits: Yup.array().of(Yup.string().required("لطفا این قسمت را کامل کنید")),
 });
 
 const RegisterForm = () => {
@@ -32,7 +51,7 @@ const RegisterForm = () => {
       validationSchema={validationSchema}
     >
       <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center p-4">
-        <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+        <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-7">
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
@@ -44,7 +63,7 @@ const RegisterForm = () => {
             </p>
           </div>
 
-          <Form className="space-y-5">
+          <Form className="space-y-4">
             {/* Full Name */}
             <div>
               <label
@@ -131,26 +150,96 @@ const RegisterForm = () => {
               />
               <ErrorMessage name="bio" />
             </div>
+            <div className="w-full flex items-center gap-2.5">
+              <div className="w-[49%]">
+                <label
+                  htmlFor="city"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
+                  شهر
+                </label>
 
+                <FastField
+                  name="address.city"
+                  id="city"
+                  type="text"
+                  placeholder="شهر خود را وارد کنید"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
+                />
+
+                <ErrorMessage name="address.city" component={PersonalError} />
+              </div>
+
+              <div className="w-[49%]">
+                <label
+                  htmlFor="postalCode"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
+                  کد پستی
+                </label>
+
+                <FastField
+                  name="address.postalCode"
+                  id="poatalCode"
+                  type="text"
+                  placeholder="کدپستی خود را وارد کنید"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
+                />
+
+                <ErrorMessage
+                  name="address.postalCode"
+                  component={PersonalError}
+                />
+              </div>
+            </div>
+
+            <div className="w-full flex items-center gap-2.5">
+              <div className="w-[49%]">
+                <label
+                  htmlFor="mobilePhone"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
+                  شماره همراه
+                </label>
+
+                <FastField
+                  name="phone[0]"
+                  id="mobilePhone"
+                  type="text"
+                  placeholder="شهر خود را وارد کنید"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
+                />
+
+                <ErrorMessage name="phone[0]" component={PersonalError} />
+              </div>
+
+              <div className="w-[49%]">
+                <label
+                  htmlFor="telePhone"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
+                  شماره ثابت
+                </label>
+
+                <FastField
+                  name="phone[1]"
+                  id="telePhone"
+                  type="text"
+                  placeholder="کدپستی خود را وارد کنید"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
+                />
+
+                <ErrorMessage name="phone[1]" component={PersonalError} />
+              </div>
+            </div>
             {/* Favorite */}
             <div>
-              <label
-                htmlFor="favorite"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              <FieldArray
+                type="text"
+                name="faivorits"
               >
-                علاقه‌مندی
-              </label>
-
-              <select
-                id="favorite"
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">انتخاب کنید</option>
-                <option value="programming">برنامه نویسی</option>
-                <option value="design">طراحی</option>
-                <option value="gaming">بازی</option>
-                <option value="music">موسیقی</option>
-              </select>
+                {(props) => <FavoritsField {...props}/>}
+              </FieldArray>
             </div>
             {/* Submit */}
             <button className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition">
