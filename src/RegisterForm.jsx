@@ -17,8 +17,11 @@ const initialValues = {
   faivorits: [""],
 };
 
-const onSubmit = (values) => {
+const onSubmit = (values, submitProps) => {
   console.log(values);
+  setTimeout(() => {
+    submitProps.setSubmitting(false);
+  }, 5000);
 };
 
 const validationSchema = Yup.object({
@@ -55,6 +58,7 @@ const RegisterForm = () => {
       initialValues={initialValues}
       onSubmit={onSubmit}
       validationSchema={validationSchema}
+      // validateOnMount
       // validateOnBlur={false}
       // validateOnChange={false}
     >
@@ -254,15 +258,34 @@ const RegisterForm = () => {
                   </FieldArray>
                 </div>
                 {/* Submit */}
-                <button type="button" onClick={() => formik.validateField("bio")} className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition">اعتبار سنجی بیوگرافی</button>
-                <button type="button" onClick={() => formik.validateForm()} className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition">اعتبار سنجی فرم</button>
-                <button type="button" onClick={() => formik.setFieldTouched("bio")} className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition">مشاهده بیوگرافی</button>
-                <button type="button" onClick={() => formik.setTouched({
-                  fullname:true,
-                  email:true
-                })} className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition">مشاهده فرم</button>
-                <button className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition">
-                  ثبت نام
+                <button
+                  className="w-full py-3 bg-blue-600 flex justify-center items-center hover:bg-blue-700 text-white font-medium rounded-lg transition"
+                  disabled={formik.isSubmitting || !(formik.isValid && formik.dirty)}
+                >
+                  {formik.isSubmitting ? (
+                    <svg
+                      className="size-5 animate-spin"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        className="opacity-25"
+                      />
+                      <path
+                        d="M4 12a8 8 0 018-8"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        className="opacity-75"
+                      />
+                    </svg>
+                  ) : (
+                    "ثبت نام"
+                  )}
                 </button>
               </Form>
             </div>
