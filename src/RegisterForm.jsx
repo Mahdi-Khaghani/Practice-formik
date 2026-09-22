@@ -3,6 +3,7 @@ import * as Yup from "yup";
 import PersonalField from "./PersonalField";
 import PersonalError from "./PersonalError";
 import FavoritsField from "./FavoritsField";
+import { useEffect, useState } from "react";
 
 const initialValues = {
   fullname: "",
@@ -21,6 +22,7 @@ const onSubmit = (values, submitProps) => {
   console.log(values);
   setTimeout(() => {
     submitProps.setSubmitting(false);
+    submitProps.resetForm();
   }, 5000);
 };
 
@@ -53,17 +55,30 @@ const validateBio = (value) => {
 };
 
 const RegisterForm = () => {
+  const [savedData, setSavedData] = useState(null);
+  const [myValues, setMyValues] = useState(null);
+  const handleGetSaveData = () => {
+    console.log(savedData);
+    setMyValues(savedData);
+  };
+  const handleSaveData = (formik) => {
+    localStorage.setItem("savedData", JSON.stringify(formik.values));
+  };
+  useEffect(() => {
+    const localSavedData = JSON.parse(localStorage.getItem("savedData"));
+    setSavedData(localSavedData);
+  }, []);
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={myValues || initialValues}
       onSubmit={onSubmit}
       validationSchema={validationSchema}
+      enableReinitialize
       // validateOnMount
       // validateOnBlur={false}
       // validateOnChange={false}
     >
       {(formik) => {
-        console.log(formik);
         return (
           <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center p-4">
             <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-7">
@@ -96,7 +111,6 @@ const RegisterForm = () => {
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     {(props) => {
-                      console.log(props);
                       return <PersonalField {...props} />;
                     }}
                   </FastField>
@@ -260,7 +274,9 @@ const RegisterForm = () => {
                 {/* Submit */}
                 <button
                   className="w-full py-3 bg-blue-600 flex justify-center items-center hover:bg-blue-700 text-white font-medium rounded-lg transition"
-                  disabled={formik.isSubmitting || !(formik.isValid && formik.dirty)}
+                  disabled={
+                    formik.isSubmitting || !(formik.isValid && formik.dirty)
+                  }
                 >
                   {formik.isSubmitting ? (
                     <svg
@@ -287,6 +303,34 @@ const RegisterForm = () => {
                     "ثبت نام"
                   )}
                 </button>
+                {formik.isValid && formik.dirty ? (
+                  <button
+                    type="button"
+                    onClick={() => handleSaveData(formik)}
+                    className="w-full py-3 bg-blue-600 flex justify-center items-center hover:bg-blue-700 text-white font-medium rounded-lg transition"
+                  >
+                    ذخیره در این سیستم
+                  </button>
+                ) : null}
+
+                {savedData ? (
+                  <button
+                    type="button"
+                    onClick={handleGetSaveData}
+                    className="w-full py-3 bg-blue-600 flex justify-center items-center hover:bg-blue-700 text-white font-medium rounded-lg transition"
+                  >
+                    دریافت اخرین اطلاعات
+                  </button>
+                ) : null}
+
+                {formik.dirty ? (
+                  <button
+                    type="reset"
+                    className="w-full py-3 bg-blue-600 flex justify-center items-center hover:bg-blue-700 text-white font-medium rounded-lg transition"
+                  >
+                     پاک کردن
+                  </button>
+                ) : null}
               </Form>
             </div>
           </div>

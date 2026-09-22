@@ -4,7 +4,6 @@ import PersonalError from "./PersonalError";
 const FavoritsField = (props) => {
   const { form, push, remove } = props;
   const { faivorits } = form.values;
-  console.log(props);
   return (
     <>
       <button
