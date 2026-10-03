@@ -1,9 +1,9 @@
 import { ErrorMessage, FastField, FieldArray, Form, Formik } from "formik";
 import * as Yup from "yup";
-import PersonalField from "./PersonalField";
 import PersonalError from "./PersonalError";
 import FavoritsField from "./FavoritsField";
 import { useEffect, useState } from "react";
+import FormikControl from "./formikElements/FormikControl";
 
 const initialValues = {
   fullname: "",
@@ -16,6 +16,9 @@ const initialValues = {
   },
   phone: ["", ""],
   faivorits: [""],
+  education: 1,
+  gender: 1,
+  skill : []
 };
 
 const onSubmit = (values, submitProps) => {
@@ -42,17 +45,27 @@ const validationSchema = Yup.object({
   faivorits: Yup.array().of(
     Yup.string().required("لطفا این قسمت را کامل کنید"),
   ),
+  education: Yup.string().required("لطفا این قسمت را کامل کنید"),
 });
 
-const validateBio = (value) => {
-  let error;
-  if (!value) {
-    error = "ورود این فیلد اجباری است";
-  } else if (!/^[\u0600-\u06FF\s0-9a-zA-Z]+$/.test(value)) {
-    error = "لطفا قالب نوشتاری را رعایت کنید";
-  }
-  return error;
-};
+const educations = [
+  { id: 1, value: "ابتدایی" },
+  { id: 2, value: "سیکل" },
+  { id: 3, value: "دیپلم" },
+  { id: 4, value: "لیسانس" },
+];
+
+const gender = [
+  { id: 1, value: "مرد" },
+  { id: 2, value: "زن" },
+];
+
+const skills = [
+  { id: 1, value: "HTML" },
+  { id: 2, value: "CSS" },
+  { id: 1, value: "REACT" },
+  { id: 2, value: "JAVASCRIPT" },
+];
 
 const RegisterForm = () => {
   const [savedData, setSavedData] = useState(null);
@@ -95,91 +108,52 @@ const RegisterForm = () => {
 
               <Form className="space-y-4">
                 {/* Full Name */}
-                <div>
-                  <label
-                    htmlFor="fullName"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                  >
-                    نام و نام خانوادگی
-                  </label>
-
-                  <FastField
-                    id="fullName"
-                    name="fullname"
-                    type="text"
-                    placeholder="مثلاً علی احمدی"
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    {(props) => {
-                      return <PersonalField {...props} />;
-                    }}
-                  </FastField>
-                </div>
+                <FormikControl
+                  control="input"
+                  type="text"
+                  label="نام و نام خانوادگی"
+                  name="fullname"
+                />
 
                 {/* Email */}
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                  >
-                    ایمیل
-                  </label>
-
-                  <FastField
-                    name="email"
-                    id="email"
-                    type="email"
-                    placeholder="example@gmail.com"
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-
-                  <ErrorMessage name="email" component={PersonalError} />
-                </div>
+                <FormikControl
+                  control="input"
+                  type="email"
+                  label="ایمیل"
+                  name="email"
+                />
 
                 {/* Password */}
-                <div>
-                  <label
-                    htmlFor="password"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                  >
-                    رمز عبور
-                  </label>
+                <FormikControl
+                  control="input"
+                  type="password"
+                  label="رمزعبور"
+                  name="password"
+                />
 
-                  <FastField
-                    name="password"
-                    id="password"
-                    type="password"
-                    placeholder="رمز عبور خود را وارد کنید"
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <ErrorMessage name="password">
-                    {(error) => (
-                      <span className="text-red-600 font-medium text-center">
-                        {error}
-                      </span>
-                    )}
-                  </ErrorMessage>
-                </div>
+                <FormikControl control="textarea" label="بیوگرافی" name="bio" />
 
-                <div>
-                  <label
-                    htmlFor="bio"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                  >
-                    بیوگرافی
-                  </label>
+                <FormikControl
+                  control="select"
+                  label="تحصیلات"
+                  name="education"
+                  options={educations}
+                />
 
-                  <FastField
-                    validate={validateBio}
-                    name="bio"
-                    id="bio"
-                    type="text"
-                    placeholder=" بیوگرافی خود را وارد کنید"
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
-                    as="textarea"
-                  />
-                  <ErrorMessage name="bio" component={PersonalError} />
-                </div>
+                <FormikControl
+                  control="radio"
+                  label="جنسیت"
+                  name="gender"
+                  options={gender}
+                />
+
+                <FormikControl
+                  control="checkbox"
+                  label="تخصص"
+                  name="skill"
+                  options={skills}
+                />
+
                 <div className="w-full flex items-center gap-2.5">
                   <div className="w-[49%]">
                     <label
@@ -328,7 +302,7 @@ const RegisterForm = () => {
                     type="reset"
                     className="w-full py-3 bg-blue-600 flex justify-center items-center hover:bg-blue-700 text-white font-medium rounded-lg transition"
                   >
-                     پاک کردن
+                    پاک کردن
                   </button>
                 ) : null}
               </Form>
